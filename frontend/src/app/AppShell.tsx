@@ -12,8 +12,6 @@ export default function AppShell() {
     const { state: chat, send, pushAssistant  } = useChat();
     const [draft, setDraft] = useState("");
 
-    const canSend = docs.hasDocs && !chat.busy;
-
     const greeted = useRef(false);
     useEffect(() => {
         if (docs.hasDocs && !greeted.current) {
@@ -24,8 +22,6 @@ export default function AppShell() {
             greeted.current = false; // allow greeting again after a full reset
         }
     }, [docs.hasDocs, pushAssistant]);
-
-
 
     return (
         <Grid templateColumns={{ base: "280px 1fr" }} h="100%">

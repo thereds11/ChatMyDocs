@@ -1,8 +1,10 @@
-# backend/app/rag/store.py
+import logging
+import os
 from pathlib import Path
-import logging, os
-from langchain_community.embeddings import OllamaEmbeddings
+
 from langchain_chroma import Chroma
+from langchain_community.embeddings import OllamaEmbeddings
+
 from app.core.config import settings
 
 logger = logging.getLogger("chatmydocs")
@@ -18,24 +20,28 @@ embeddings = OllamaEmbeddings(
     base_url=settings.BASE_URL,
 )
 
-def _new_chroma():
+
+def _new_chroma() -> Chroma:
     return Chroma(
         collection_name=settings.COLLECTION_NAME,
         embedding_function=embeddings,
         persist_directory=str(persist_dir),
     )
 
+
 # module-level handle; other modules should import *the module* and read this name
 vectorstore = _new_chroma()
 
-def rebuild_vectorstore():
+
+def rebuild_vectorstore() -> Chroma:
     """Create a new Chroma instance and replace the module-level handle."""
     global vectorstore
     logger.info("rebuild_vectorstore: creating new Chroma handle")
     vectorstore = _new_chroma()
     return vectorstore
 
-def reset_store():
+
+def reset_store() -> None:
     """Delete collection then rebuild a fresh store + collection."""
     logger.info("reset_store: deleting collection %s", settings.COLLECTION_NAME)
     try:

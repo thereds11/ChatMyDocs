@@ -25,7 +25,7 @@ export default function ChatComposer({
                     onChange={(e) => onChange(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onSend(); } }}
                     placeholder={placeholder}
-                    //   @ts-ignore
+                    //   @ts-expect-error Chakra UI has it but didn't included into their types
                     variant="unstyled"
                     bg="transparent"
                     rounded="full"

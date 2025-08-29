@@ -1,21 +1,22 @@
-# backend/app/rag/ingestion.py
-from pathlib import Path
-from typing import List
 import logging
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, TextLoader
+from pathlib import Path
+
+from langchain_community.document_loaders import Docx2txtLoader, PyPDFLoader, TextLoader
+from langchain_community.document_loaders.base import BaseLoader
 from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 from app.core.config import settings
 from app.rag import store  # 👈 import the module, not the object
 
 logger = logging.getLogger("chatmydocs")
 
 splitter = RecursiveCharacterTextSplitter(
-    chunk_size=settings.CHUNK_SIZE,
-    chunk_overlap=settings.CHUNK_OVERLAP
+    chunk_size=settings.CHUNK_SIZE, chunk_overlap=settings.CHUNK_OVERLAP
 )
 
-def _loader_for(path: Path):
+
+def _loader_for(path: Path) -> BaseLoader:
     s = path.suffix.lower()
     if s == ".pdf":
         return PyPDFLoader(str(path))
@@ -23,9 +24,10 @@ def _loader_for(path: Path):
         return Docx2txtLoader(str(path))
     return TextLoader(str(path), encoding="utf-8")
 
-def load_and_split(paths: List[Path]) -> List[Document]:
+
+def load_and_split(paths: list[Path]) -> list[Document]:
     logger.info("ingest: loading %d file(s)", len(paths))
-    docs: List[Document] = []
+    docs: list[Document] = []
     for p in paths:
         logger.info("ingest: load %s", p.name)
         raw = _loader_for(p).load()
@@ -38,7 +40,8 @@ def load_and_split(paths: List[Path]) -> List[Document]:
     logger.info("ingest: total chunks = %d", len(docs))
     return docs
 
-def ingest(paths: List[Path]) -> int:
+
+def ingest(paths: list[Path]) -> int:
     logger.info("ingest: pipeline start")
     docs = load_and_split(paths)
     if not docs:

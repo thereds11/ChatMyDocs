@@ -1,18 +1,18 @@
-from fastapi import FastAPI, UploadFile, File
+import logging
+import tempfile
+import time
+from pathlib import Path
+from typing import Annotated, Any
+
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import tempfile
-from pathlib import Path
-from typing import List
-
-from app.rag.chain import RAG_CHAIN, refresh_chain
-from app.rag.store import vectorstore, reset_store, embeddings
-
-from app.rag.ingestion import ingest
 
 from app.core.config import settings
+from app.rag.chain import RAG_CHAIN, refresh_chain
+from app.rag.ingestion import ingest
+from app.rag.store import embeddings, reset_store, vectorstore
 
-import logging, time
 logger = logging.getLogger("chatmydocs")
 logging.basicConfig(level=logging.INFO)
 
@@ -28,27 +28,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class QueryRequest(BaseModel):
     question: str
 
+
 @app.get("/health")
-def health():
+def health() -> dict[str, bool]:
     logger.info("GET /health")
     return {"ok": True}
 
+
 @app.get("/stats")
-def stats():
+def stats() -> dict[str, int]:
     count = vectorstore._collection.count()
     logger.info(f"GET /stats -> {count}")
     return {"documents": count}
 
 
 @app.post("/ingest")
-async def ingest_files(files: List[UploadFile] = File(...)):
+async def ingest_files(
+    files: Annotated[list[UploadFile], File(...)],
+) -> dict[str, int]:
     t0 = time.perf_counter()
     logger.info(f"POST /ingest start: {len(files)} file(s): {[f.filename for f in files]}")
     tmpdir = Path(tempfile.mkdtemp(prefix="cmd_ingest_"))
-    paths: List[Path] = []
+    paths: list[Path] = []
     total_bytes = 0
     try:
         logger.info("/ingest: embeddings ping…")
@@ -72,13 +77,14 @@ async def ingest_files(files: List[UploadFile] = File(...)):
         logger.exception("/ingest failed")
         raise
 
+
 @app.post("/query")
-def query(request: QueryRequest):
+def query(request: QueryRequest) -> dict[str, Any]:
     logger.info(f"POST /query q='{request.question[:80]}'")
     _ = embeddings.embed_query("ping")
     if vectorstore._collection.count() == 0:
         return {"answer": "No documents ingested yet.", "sources": []}
-    
+
     res = RAG_CHAIN.invoke({"input": request.question})
     ctx = res.get("context", [])
     sources = []
@@ -90,10 +96,11 @@ def query(request: QueryRequest):
     logger.info(f"/query ok -> {len(sources)} sources")
     return {"answer": res["answer"], "sources": sources}
 
+
 @app.post("/reset")
-def reset():
+def reset() -> dict[str, bool | str]:
     logger.info("POST /reset start")
-    reset_store()        # deletes collection + rebuilds vectorstore
-    refresh_chain()      # rebuilds retriever/chain to point at new store
+    reset_store()  # deletes collection + rebuilds vectorstore
+    refresh_chain()  # rebuilds retriever/chain to point at new store
     logger.info("POST /reset done")
     return {"ok": True, "message": "Vector store reset."}

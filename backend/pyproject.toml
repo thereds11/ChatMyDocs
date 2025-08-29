@@ -1,0 +1,16 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+lint.select = ["E","F","W","I","B","UP","ANN"]
+lint.ignore = ["ANN101","ANN102"]  # ignore self/cls annotations
+exclude = ["app/__pycache__","**/.venv"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-q"
+testpaths = ["tests"]

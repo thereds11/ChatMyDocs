@@ -21,7 +21,7 @@ const initial: State = { selected: [], hasDocs: false, docCount: 0, busy: false 
 function dedupe(files: File[]) {
   const map = new Map<string, File>();
   for (const f of files) {
-    const key = `${f.name}:${f.size}:${(f as any).lastModified ?? 0}`;
+    const key = `${f.name}:${f.size}:${(f as File).lastModified ?? 0}`;
     if (!map.has(key)) map.set(key, f);
   }
   return Array.from(map.values());
@@ -87,7 +87,6 @@ function useDocsStore() {
         dispatch({ type: "BUSY", on: false });
       }
     },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [state]); // state captured so sizes update
 
   // On mount: detect existing store (useful if backend already has docs)

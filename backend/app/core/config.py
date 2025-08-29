@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import List
+
 
 class Settings(BaseSettings):
     BASE_URL: str = "http://localhost:11434"  # Ollama
@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     CHUNK_SIZE: int = 800
     CHUNK_OVERLAP: int = 100
     TOP_K: int = 4
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:8001", "http://127.0.0.1:8001"]
+    ALLOWED_ORIGINS: list[str] = ["http://localhost:8001", "http://127.0.0.1:8001"]
+
 
 settings = Settings()

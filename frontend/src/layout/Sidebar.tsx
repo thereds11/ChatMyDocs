@@ -1,4 +1,4 @@
-import { Box, Button, Separator, Flex, Heading, Icon, IconButton, List, Text } from "@chakra-ui/react";
+import { Box, Separator, Flex, Heading, Icon, IconButton, List, Text } from "@chakra-ui/react";
 import { FiMoon, FiSun, FiTrash2 } from "react-icons/fi";
 import { useTheme } from "next-themes";
 // import DocsFilePicker from "../features/docs/DocsFilePicker";
@@ -26,12 +26,6 @@ export default function Sidebar({ histories = [], onSelectHistory }: { histories
         <Text fontSize="sm" color="gray.400">Docs in store</Text>
         <Text fontWeight="bold">{docs.docCount}</Text>
       </Box>
-
-      {/* <DocsFilePicker selected={docs.selected} onPick={pickFiles} showList={false} />
-
-      <Flex gap={2}>
-        <Button onClick={confirm} disabled={docs.selected.length === 0 || docs.busy} w="full">Confirm</Button>
-        </Flex>*/}
       <IconButton aria-label="Reset corpus" onClick={async () => { await reset(); clearChat(); }} disabled={docs.busy}><FiTrash2 /></IconButton>
 
       <Separator />

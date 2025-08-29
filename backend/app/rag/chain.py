@@ -1,10 +1,11 @@
-# backend/app/rag/chain.py
-from langchain_community.chat_models import ChatOllama
-from langchain_core.prompts import PromptTemplate
 from langchain.chains.combine_documents.stuff import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
+from langchain_community.chat_models import ChatOllama
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import Runnable
+
 from app.core.config import settings
-from app.rag import store  # 👈 use module (dynamic vectorstore)
+from app.rag import store
 
 llm = ChatOllama(
     model=settings.LLM_MODEL,
@@ -25,7 +26,8 @@ Context:
 """
 )
 
-def _build_chain():
+
+def _build_chain() -> Runnable:
     retriever = store.vectorstore.as_retriever(search_kwargs={"k": settings.TOP_K})
     combine_chain = create_stuff_documents_chain(
         llm=llm,
@@ -34,10 +36,12 @@ def _build_chain():
     )
     return create_retrieval_chain(retriever, combine_chain)
 
+
 # global handle used by app.main
 RAG_CHAIN = _build_chain()
 
-def refresh_chain():
+
+def refresh_chain() -> bool:
     """Rebuild the retriever + RAG chain against the current vectorstore."""
     global RAG_CHAIN
     RAG_CHAIN = _build_chain()
