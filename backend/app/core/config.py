@@ -1,0 +1,15 @@
+from pydantic_settings import BaseSettings
+from typing import List
+
+class Settings(BaseSettings):
+    BASE_URL: str = "http://localhost:11434"  # Ollama
+    LLM_MODEL: str = "llama3"
+    EMBED_MODEL: str = "mxbai-embed-large"
+    PERSIST_DIR: str = "chroma_store"
+    COLLECTION_NAME: str = "chatmydocs"
+    CHUNK_SIZE: int = 800
+    CHUNK_OVERLAP: int = 100
+    TOP_K: int = 4
+    ALLOWED_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+
+settings = Settings()
