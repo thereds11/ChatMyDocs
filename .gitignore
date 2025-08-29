@@ -1,0 +1,21 @@
+# general
+.DB_Store
+.env
+*.log
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# node
+node_modules/
+dist/
+.env.local
+
+# app data
+backend/chroma_store/
