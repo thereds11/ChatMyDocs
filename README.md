@@ -81,7 +81,7 @@ ollama pull mxbai-embed-large
 ### 1) Clone
 
 ```bat
-git clone https://github.com/your-username/ChatMyDocs.git
+git clone https://github.com/thereds11/ChatMyDocs.git
 cd ChatMyDocs
 ```
 
@@ -230,8 +230,11 @@ cd ..\frontend && npm run lint && npm run typecheck
 
 ## 📜 License
 
-MIT © you
+Released under the **MIT License**.
 
+Copyright © 2025 **Your Name**
+
+See [LICENSE](LICENSE) for the full text.
 ---
 
 ## 🙏 Acknowledgements
