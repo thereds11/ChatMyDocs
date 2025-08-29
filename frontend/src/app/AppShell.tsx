@@ -5,14 +5,27 @@ import { useChat } from "../state/chat";
 import DocsEmptyState from "../features/docs/DocsEmptyState";
 import ChatTranscript from "../features/chat/ChatTranscript";
 import ChatComposer from "../features/chat/ChatCompose";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function AppShell() {
-    const { state: docs, pickFiles, confirm, removeSelected  } = useDocs();
-    const { state: chat, send } = useChat();
+    const { state: docs, pickFiles, confirm, removeSelected } = useDocs();
+    const { state: chat, send, pushAssistant  } = useChat();
     const [draft, setDraft] = useState("");
 
     const canSend = docs.hasDocs && !chat.busy;
+
+    const greeted = useRef(false);
+    useEffect(() => {
+        if (docs.hasDocs && !greeted.current) {
+            pushAssistant("Hi! I’m ready to answer questions about your documents.");
+            greeted.current = true;
+        }
+        if (!docs.hasDocs) {
+            greeted.current = false; // allow greeting again after a full reset
+        }
+    }, [docs.hasDocs, pushAssistant]);
+
+
 
     return (
         <Grid templateColumns={{ base: "280px 1fr" }} h="100%">
@@ -26,7 +39,7 @@ export default function AppShell() {
                     {docs.hasDocs ? (
                         <>
                             {/* Chat list fills available height and scrolls */}
-                            <ChatTranscript messages={chat.messages} />
+                            <ChatTranscript messages={chat.messages} thinking={chat.busy} />
                         </>
                     ) : (
                         <>
@@ -35,7 +48,7 @@ export default function AppShell() {
                                 selected={docs.selected}
                                 onPick={pickFiles}
                                 onConfirm={confirm}
-                                onRemove={removeSelected }
+                                onRemove={removeSelected}
                                 busy={docs.busy}
                             />
                         </>

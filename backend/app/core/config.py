@@ -10,6 +10,6 @@ class Settings(BaseSettings):
     CHUNK_SIZE: int = 800
     CHUNK_OVERLAP: int = 100
     TOP_K: int = 4
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    ALLOWED_ORIGINS: List[str] = ["http://localhost:8001", "http://127.0.0.1:8001"]
 
 settings = Settings()
