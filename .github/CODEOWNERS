@@ -1,0 +1,6 @@
+# Require your approval on all changes
+* @thereds11
+
+# (optional) different owners per area
+/backend/ @thereds11
+/frontend/ @thereds11
