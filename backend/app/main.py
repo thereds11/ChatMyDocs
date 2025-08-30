@@ -77,7 +77,6 @@ async def ingest_files(
         logger.exception("/ingest failed")
         raise
 
-
 @app.post("/query")
 def query(request: QueryRequest) -> dict[str, Any]:
     logger.info(f"POST /query q='{request.question[:80]}'")
